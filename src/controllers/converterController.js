@@ -8,7 +8,7 @@ import { FILE_UPLOAD_ERROR, LIMIT_FILE_SIZE_ERROR,
 import {localUpload} from '../services/uploadService'
 import docxConverter from 'docx-pdf'
 import path from 'path'
-
+import pdf2base64 from 'pdf-to-base64'
 
 const wordToPDF = async (req,res,next) =>{
     try{                              
@@ -25,18 +25,20 @@ const wordToPDF = async (req,res,next) =>{
 
                 const requiredPath = path.resolve(rawPath)
 
-                const newName = `${requiredPath}/` +file?.originalname.split('.')[0] + '.pdf'
-                
-                docxConverter(`${file?.path}`,`${newName}`,async (err,result) =>{
+                const newFileName =  `${requiredPath}/` +file?.originalname.substr(0, file?.originalname.lastIndexOf(".")) + ".pdf"
+            
+                docxConverter(`${file?.path}`,`${newFileName}`,async (err,result) =>{
                     if(err){
                       console.log("docconverter err",err);
                       return next( new AppError(ERROR_CREATING_PDF,INTERNAL_SERVER_ERROR))
                     }
 
+                    const base64File = await pdf2base64(result.filename)
+
                     res.status(CREATED).json({
                         status: SUCCESS_MSG,
                         data:{                          
-                            url:`${req?.hostname}${newName}`
+                             base64File
                         }
                     });
 
