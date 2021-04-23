@@ -1,0 +1,5 @@
+const SUCCESS_MSG = 'Success';
+const BAD_REQUEST_MSG = 'Bad request';
+const LIMIT_FILE_SIZE = 'LIMIT_FILE_SIZE';
+
+export {SUCCESS_MSG,BAD_REQUEST_MSG,LIMIT_FILE_SIZE};
